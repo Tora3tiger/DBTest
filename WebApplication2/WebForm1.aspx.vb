@@ -22,21 +22,44 @@
     Private Sub SQLSender(str As String)
         Dim con As New System.Data.SqlClient.SqlConnection("Data Source=DEMO-PC\SQLEXPRESS2;Initial Catalog=sampleDB;Integrated Security=True;")
 
-        con.Open()
+        If Not str = "" Then
+            con.Open()
 
-        Dim cmd As New System.Data.SqlClient.SqlCommand(str, con)
+            Dim cmd As New System.Data.SqlClient.SqlCommand(str, con)
 
-        Dim OBJ As Integer
-        OBJ = Convert.ToInt32(cmd.ExecuteNonQuery())
-        If OBJ > 0 Then
-            Label3.Text = "Data is successfully inserted in database"
-        Else
-            Label3.Text = "Data is not inserted in database"
+            Dim OBJ As Integer
+
+            Try
+            OBJ = Convert.ToInt32(cmd.ExecuteNonQuery())
+            If OBJ > 0 Then
+                Label3.Text = "Data is successfully inserted in database"
+            Else
+                Label3.Text = "Data is not inserted in database"
+                End If
+
+                Response.Redirect("WebForm1.aspx")
+
+            Catch ex As System.Data.SqlClient.SqlException
+                Label3.Text = ex.ErrorCode
+                Label3.Text = Label3.Text + ex.Message
+
+            Catch ex As Exception
+                Label3.Text = ex.ToString
+            End Try
+
+            con.Close()
         End If
 
-        con.Close()
 
     End Sub
 
+    Private Sub grid_RowUpdating(sender As Object, e As ListViewUpdateEventArgs) Handles ListView1.ItemUpdating
+        If Not Page.IsValid Then
+            e.Cancel = True
+        Else
+        End If
+
+
+    End Sub
 
 End Class
